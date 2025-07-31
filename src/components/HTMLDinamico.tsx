@@ -9,17 +9,20 @@ import {
   Layers3,
   Smartphone,
   Monitor,
-  Palette
+  Palette,
+  Image as ImageIcon
 } from 'lucide-react';
 import { Block } from '@/types/block';
 import { BlockEditor } from './BlockEditor';
 import { BlockList } from './BlockList';
 import { HTMLPreview } from './HTMLPreview';
 import { HTMLExporter } from './HTMLExporter';
+import { LogoUploader } from './LogoUploader';
 
 export const HTMLDinamico: React.FC = () => {
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [activeTab, setActiveTab] = useState('editor');
+  const [logo, setLogo] = useState<string | null>(null);
 
   const handleAddBlock = (block: Block) => {
     setBlocks(prev => [...prev, block]);
@@ -163,7 +166,7 @@ export const HTMLDinamico: React.FC = () => {
                       Veja como seu documento HTML ficará quando exportado, incluindo a navegação lateral.
                     </p>
                   </Card>
-                  <HTMLPreview blocks={blocks} />
+                  <HTMLPreview blocks={blocks} logo={logo} />
                 </div>
               </TabsContent>
 
@@ -178,7 +181,7 @@ export const HTMLDinamico: React.FC = () => {
                       Baixe seu documento HTML completo com estilo moderno e navegação lateral automática.
                     </p>
                   </Card>
-                  <HTMLExporter blocks={blocks} />
+                  <HTMLExporter blocks={blocks} logo={logo} />
                 </div>
               </TabsContent>
             </div>
@@ -186,6 +189,8 @@ export const HTMLDinamico: React.FC = () => {
             {/* Sidebar - Statistics & Quick Info */}
             <div className="lg:col-span-1">
               <div className="sticky top-8 space-y-6">
+                <LogoUploader logo={logo} onLogoChange={setLogo} />
+                
                 <Card className="p-6 bg-white shadow-card">
                   <h3 className="font-semibold text-foreground mb-4">📊 Estatísticas</h3>
                   <div className="space-y-3">

@@ -5,9 +5,10 @@ import { Block, BlockType } from '@/types/block';
 
 interface HTMLPreviewProps {
   blocks: Block[];
+  logo?: string | null;
 }
 
-export const HTMLPreview: React.FC<HTMLPreviewProps> = ({ blocks }) => {
+export const HTMLPreview: React.FC<HTMLPreviewProps> = ({ blocks, logo }) => {
   const generateNavigationItems = (): { text: string; anchor: string }[] => {
     return blocks
       .filter(block => 
@@ -73,8 +74,13 @@ export const HTMLPreview: React.FC<HTMLPreviewProps> = ({ blocks }) => {
     const contentHTML = blocks.map(renderBlock).join('\n    ');
     
     const navigationHTML = navigationItems.length > 0 ? 
-      navigationItems.map(item => `    <a href="#${item.anchor}">${item.text}</a>`).join('\n') : 
-      '    <div class="nav-empty">Nenhuma navegação disponível</div>';
+      navigationItems.map(item => `      <a href="#${item.anchor}" class="button">${item.text}</a>`).join('\n') : 
+      '      <div class="nav-empty">Nenhuma navegação disponível</div>';
+
+    const logoHTML = logo ? 
+      `  <div class="nav-header">
+    <img src="${logo}" alt="Logo">
+  </div>` : '';
 
     return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -83,23 +89,10 @@ export const HTMLPreview: React.FC<HTMLPreviewProps> = ({ blocks }) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Documento HTML Dinâmico</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      background: #ffffff;
-    }
-    
     #sidebar {
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      height: 100%;
       width: 240px;
       position: fixed;
       top: 0;
@@ -108,156 +101,175 @@ export const HTMLPreview: React.FC<HTMLPreviewProps> = ({ blocks }) => {
       background: linear-gradient(180deg, #fdfdfd, #f0f0f0);
       border-right: 1px solid #ddd;
       box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+      font-family: "Segoe UI", sans-serif;
+      z-index: 1000;
       overflow-y: auto;
-      padding: 20px;
-      z-index: 100;
     }
-    
-    .nav-title {
-      font-size: 18px;
-      font-weight: 600;
-      color: #2d3748;
-      margin-bottom: 16px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #e2e8f0;
-    }
-    
-    #sidebar a {
-      display: block;
-      padding: 8px 12px;
-      margin: 4px 0;
-      color: #4a5568;
-      text-decoration: none;
-      border-radius: 6px;
-      transition: all 0.2s ease;
-      font-size: 14px;
-    }
-    
-    #sidebar a:hover {
-      background: #e2e8f0;
-      color: #2d3748;
-      transform: translateX(4px);
-    }
-    
-    .nav-empty {
-      padding: 20px 12px;
-      color: #a0aec0;
-      font-style: italic;
+
+    #sidebar .nav-header {
       text-align: center;
-      font-size: 14px;
+      padding: 2px 0 2px;
     }
-    
-    .container {
-      margin-left: 260px;
-      padding: 40px;
-      background: white;
-      min-height: 100vh;
+
+    #sidebar .nav-header img {
+      width: 220px;
+      opacity: 0.9;
+      transition: 0.3s;
     }
-    
-    h1, h2, h3 {
-      margin: 24px 0 16px 0;
-      color: #2d3748;
-      line-height: 1.2;
+    #sidebar .nav-header img:hover {
+      opacity: 1;
     }
-    
-    h1 {
-      font-size: 2.25rem;
-      font-weight: 700;
-      border-bottom: 3px solid #667eea;
-      padding-bottom: 8px;
+
+    #sidebar .nav-body {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
     }
-    
-    h2 {
-      font-size: 1.875rem;
-      font-weight: 600;
-      border-bottom: 2px solid #a78bfa;
-      padding-bottom: 6px;
+
+    #sidebar .nav-title {
+      text-align: center;
+      font-weight: bold;
+      color: #333;
+      margin: 10px 0;
+      font-size: 1.1em;
+      cursor: pointer;
+      user-select: none;
     }
-    
-    h3 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: #4c51bf;
-    }
-    
-    p {
-      margin: 16px 0;
-      color: #4a5568;
-    }
-    
-    ul {
-      margin: 16px 0;
-      padding-left: 24px;
-    }
-    
-    li {
-      margin: 8px 0;
-      color: #4a5568;
-    }
-    
-    hr {
-      margin: 32px 0;
-      border: none;
-      height: 2px;
-      background: linear-gradient(90deg, #667eea, #764ba2);
-      border-radius: 1px;
-    }
-    
-    .img-small {
-      width: 250px;
-      max-width: 100%;
-    }
-    
-    .img-medium {
-      width: 450px;
-      max-width: 100%;
-    }
-    
-    .img-large {
-      width: 700px;
-      max-width: 100%;
-    }
-    
-    .content-image {
+
+    #sidebar a.button,
+    #sidebar button.button {
       display: block;
-      margin: 20px auto;
+      width: 80%;
+      margin: 4px auto;
+      padding: 10px;
+      text-align: center;
+      border: none;
       border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      background-color: #10608F;
+      color: white;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.1s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    
+    #sidebar a.button:hover,
+    #sidebar button.button:hover {
+      background-color: #0e5078;
+      transform: scale(1.03);
+      cursor: pointer;
+    }
+
+    #sidebar button.button {
+      background-color: #28a745;
+      margin-top: 20px;
+    }
+    #sidebar button.button:hover {
+      background-color: #218838;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 20px;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    h1, h2, h3 {
+      color: #333;
+    }
+
+    p {
+      margin-bottom: 10px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-left: 260px;
+    }
+
+    .highlight {
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    .warning {
+      color: red;
+      font-weight: bold;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 10px 15px;
+      margin: 10px 0;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    .button:hover {
+      background: #0056b3;
+    }
+
+    .table-container {
+      margin-top: 20px;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 24px 0;
-      background: white;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    
+
     th, td {
-      padding: 12px 16px;
+      padding: 10px;
+      border: 1px solid #ddd;
       text-align: left;
-      border-bottom: 1px solid #e2e8f0;
     }
-    
+
     th {
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: #007bff;
       color: white;
-      font-weight: 600;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
-    
-    td {
-      color: #4a5568;
+
+    a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
     }
-    
-    tr:hover {
-      background: #f7fafc;
+
+    a:hover {
+      text-decoration: underline;
     }
-    
+
+    .image-item {
+      list-style-type: none;
+      margin: 15px 0;
+      text-align: center;
+    }
+
+    .content-image {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 10px auto;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .img-small { width: 250px; }
+    .img-medium { width: 600px; }
+    .img-large { width: 700px; }
+    .img-extra-large { width: 850px; }
+    .img-mega-extra-large { width: 1050px; }
+
     @media (max-width: 768px) {
       #sidebar {
         position: relative;
@@ -272,39 +284,16 @@ export const HTMLPreview: React.FC<HTMLPreviewProps> = ({ blocks }) => {
         margin-left: 0;
         padding: 20px;
       }
-      
-      h1 {
-        font-size: 1.875rem;
-      }
-      
-      h2 {
-        font-size: 1.5rem;
-      }
-      
-      h3 {
-        font-size: 1.25rem;
-      }
-      
-      .img-small,
-      .img-medium,
-      .img-large {
-        width: 100%;
-      }
-      
-      table {
-        font-size: 14px;
-      }
-      
-      th, td {
-        padding: 8px 12px;
-      }
     }
   </style>
 </head>
 <body>
   <div id="sidebar">
-    <div class="nav-title">Navegação</div>
+${logoHTML}
+    <div class="nav-body">
+      <div class="nav-title" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">☰ Menu de Navegação</div>
 ${navigationHTML}
+    </div>
   </div>
   
   <div class="container">
