@@ -30,12 +30,8 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ onAddBlock }) => {
   const [selectedType, setSelectedType] = useState<BlockType>(BlockType.PARAGRAPH);
   const [content, setContent] = useState('');
   const [anchor, setAnchor] = useState('');
-  const [formatting, setFormatting] = useState({
-    bold: false,
-    italic: false,
-    underline: false,
-    color: '#000000'
-  });
+  const [currentColor, setCurrentColor] = useState('#000000');
+  const contentRef = useRef<HTMLTextAreaElement>(null);
   const [tableHeaders, setTableHeaders] = useState(['Coluna 1', 'Coluna 2']);
   const [tableRows, setTableRows] = useState([['Dados 1', 'Dados 2']]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -53,6 +49,58 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ onAddBlock }) => {
     if (validateAnchor(value)) {
       setAnchor(value);
     }
+  };
+
+  const insertFormatting = (tag: string, closingTag?: string) => {
+    const textarea = contentRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = content.substring(start, end);
+
+    if (start === end) {
+      // Se não há texto selecionado, apenas posiciona o cursor entre as tags
+      const beforeCursor = content.substring(0, start);
+      const afterCursor = content.substring(start);
+      const newContent = beforeCursor + tag + (closingTag || `</${tag.substring(1)}`) + afterCursor;
+      setContent(newContent);
+      
+      // Posiciona o cursor entre as tags
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + tag.length, start + tag.length);
+      }, 0);
+    } else {
+      // Se há texto selecionado, envolve o texto com as tags
+      const beforeSelection = content.substring(0, start);
+      const afterSelection = content.substring(end);
+      const wrappedText = tag + selectedText + (closingTag || `</${tag.substring(1)}`);
+      const newContent = beforeSelection + wrappedText + afterSelection;
+      setContent(newContent);
+      
+      // Mantém a seleção no texto formatado
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + tag.length, start + tag.length + selectedText.length);
+      }, 0);
+    }
+  };
+
+  const handleBold = () => {
+    insertFormatting('<strong>', '</strong>');
+  };
+
+  const handleItalic = () => {
+    insertFormatting('<em>', '</em>');
+  };
+
+  const handleUnderline = () => {
+    insertFormatting('<u>', '</u>');
+  };
+
+  const handleColor = () => {
+    insertFormatting(`<span style="color: ${currentColor}">`, '</span>');
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,8 +160,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ onAddBlock }) => {
       content: isTable ? '' : content,
       anchor: isHeading && anchor ? anchor : undefined,
       imageSize,
-      tableData: isTable ? { headers: tableHeaders, rows: tableRows } : undefined,
-      formatting: !isSeparator && !isImage && !isTable ? formatting : undefined
+      tableData: isTable ? { headers: tableHeaders, rows: tableRows } : undefined
     };
 
     onAddBlock(block);
@@ -121,7 +168,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ onAddBlock }) => {
     // Reset form
     setContent('');
     setAnchor('');
-    setFormatting({ bold: false, italic: false, underline: false, color: '#000000' });
+    setCurrentColor('#000000');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -198,42 +245,33 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ onAddBlock }) => {
           <>
             <div>
               <label className="text-sm font-medium text-foreground mb-2 block">
-                Conteúdo
-              </label>
-              <Textarea
-                placeholder="Digite o conteúdo aqui..."
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                className="w-full min-h-[100px]"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-foreground mb-2 block">
                 Formatação
               </label>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mb-2">
                 <Button
                   type="button"
-                  variant={formatting.bold ? "default" : "outline"}
+                  variant="outline"
                   size="sm"
-                  onClick={() => setFormatting(prev => ({ ...prev, bold: !prev.bold }))}
+                  onClick={handleBold}
+                  title="Negrito - Aplica <strong> ao texto selecionado"
                 >
                   <Bold className="w-4 h-4" />
                 </Button>
                 <Button
                   type="button"
-                  variant={formatting.italic ? "default" : "outline"}
+                  variant="outline"
                   size="sm"
-                  onClick={() => setFormatting(prev => ({ ...prev, italic: !prev.italic }))}
+                  onClick={handleItalic}
+                  title="Itálico - Aplica <em> ao texto selecionado"
                 >
                   <Italic className="w-4 h-4" />
                 </Button>
                 <Button
                   type="button"
-                  variant={formatting.underline ? "default" : "outline"}
+                  variant="outline"
                   size="sm"
-                  onClick={() => setFormatting(prev => ({ ...prev, underline: !prev.underline }))}
+                  onClick={handleUnderline}
+                  title="Sublinhado - Aplica <u> ao texto selecionado"
                 >
                   <Underline className="w-4 h-4" />
                 </Button>
@@ -241,12 +279,38 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ onAddBlock }) => {
                   <Palette className="w-4 h-4 text-muted-foreground" />
                   <input
                     type="color"
-                    value={formatting.color}
-                    onChange={(e) => setFormatting(prev => ({ ...prev, color: e.target.value }))}
+                    value={currentColor}
+                    onChange={(e) => setCurrentColor(e.target.value)}
                     className="w-8 h-8 border border-border rounded cursor-pointer"
+                    title="Escolha uma cor"
                   />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleColor}
+                    title="Aplicar cor ao texto selecionado"
+                  >
+                    Cor
+                  </Button>
                 </div>
               </div>
+              <p className="text-xs text-muted-foreground mb-2">
+                Selecione o texto e clique nos botões para aplicar formatação apenas ao trecho selecionado
+              </p>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-foreground mb-2 block">
+                Conteúdo
+              </label>
+              <Textarea
+                ref={contentRef}
+                placeholder="Digite o conteúdo aqui... Selecione texto e use os botões de formatação acima para aplicar estilos apenas ao trecho selecionado."
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="w-full min-h-[100px] font-mono text-sm"
+              />
             </div>
           </>
         )}
