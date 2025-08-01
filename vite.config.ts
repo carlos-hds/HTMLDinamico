@@ -5,7 +5,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: "/HTMLDinamico/",
+  base: "/",
   build: {
     outDir: "docs", // <--- necessário para GitHub Pages
     emptyOutDir: true,
