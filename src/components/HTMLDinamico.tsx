@@ -83,11 +83,6 @@ export const HTMLDinamico: React.FC = () => {
                 <Palette className="w-3 h-3" />
                 {getNavigationCount()} âncoras
               </Badge>
-              <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
-                <Monitor className="w-4 h-4" />
-                <Smartphone className="w-4 h-4" />
-                <span>Responsivo</span>
-              </div>
             </div>
           </div>
         </div>
