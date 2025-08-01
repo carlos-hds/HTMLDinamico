@@ -1,0 +1,3 @@
+[build]
+  publish = "/"
+  command = "" # Não é necessário build para HTML estático
