@@ -20,11 +20,9 @@ import { HTMLExporter } from './HTMLExporter';
 import { LogoUploader } from './LogoUploader';
 
 export const HTMLDinamico: React.FC = () => {
-  console.log('HTMLDinamico component initializing...');
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [activeTab, setActiveTab] = useState('editor');
   const [logo, setLogo] = useState<string | null>(null);
-  console.log('HTMLDinamico state initialized, blocks:', blocks.length);
 
   const handleAddBlock = (block: Block) => {
     setBlocks(prev => [...prev, block]);

@@ -3,8 +3,8 @@ echo ========== BUILDANDO O PROJETO ==========
 npm run build
 
 echo.
-echo ========== INDO PARA A PASTA DOCS ==========
-cd docs
+echo ========== INDO PARA A PASTA DIST ==========
+cd dist
 
 echo.
 echo ========== INICIALIZANDO GIT ==========
