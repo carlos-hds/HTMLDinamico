@@ -271,20 +271,6 @@ export const HTMLExporter: React.FC<HTMLExporterProps> = ({ blocks, logo }) => {
     .img-extra-large { width: 850px; }
     .img-mega-extra-large { width: 1050px; }
 
-    .footer {
-      margin-top: 40px;
-      padding: 20px 0;
-      border-top: 1px solid #ddd;
-      text-align: center;
-    }
-
-    .footer p {
-      margin: 0;
-      color: #666;
-      font-size: 0.9em;
-      font-style: italic;
-    }
-
     @media (max-width: 768px) {
       #sidebar {
         position: relative;
@@ -313,10 +299,6 @@ ${navigationHTML}
   
   <div class="container">
     ${contentHTML}
-    
-    <div class="footer">
-      <p>Desenvolvido por: Carlos Silva</p>
-    </div>
   </div>
 </body>
 </html>`;
