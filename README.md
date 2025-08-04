@@ -2,7 +2,7 @@
 
 **HTMLDinamico** é uma aplicação web que permite a criação de páginas HTML de forma visual, intuitiva e sem a necessidade de conhecimento técnico em programação. O foco é oferecer uma experiência semelhante a editores como Word ou Google Docs, mas voltada para a estruturação de conteúdo em HTML, com suporte a estilos, imagens, tabelas e navegação lateral automática.
 
-🔗 Acesse a aplicação: [https://carlos-hds.github.io/HTMLDinamico]
+🔗 Acesse a aplicação: [(https://html-dinamico.lovable.app/)]
 
 ---
 
