@@ -72,14 +72,24 @@ export const HTMLPreview: React.FC<HTMLPreviewProps> = ({ blocks, logo }) => {
   const generateCompleteHTML = (): string => {
     const navigationItems = generateNavigationItems();
     const contentHTML = blocks.map(renderBlock).join('\n    ');
+    const hasSidebar = navigationItems.length > 0;
     
     const navigationHTML = navigationItems.length > 0 ? 
       navigationItems.map(item => `      <a href="#${item.anchor}" class="button">${item.text}</a>`).join('\n') : 
-      '      <div class="nav-empty">Nenhuma navegação disponível</div>';
+      '';
 
     const logoHTML = logo ? 
       `  <div class="nav-header">
     <img src="${logo}" alt="Logo">
+  </div>` : '';
+
+    const sidebarHTML = hasSidebar ? `
+  <div id="sidebar">
+${logoHTML}
+    <div class="nav-body">
+      <div class="nav-title" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">☰ Menu de Navegação</div>
+${navigationHTML}
+    </div>
   </div>` : '';
 
     return `<!DOCTYPE html>
@@ -184,9 +194,18 @@ export const HTMLPreview: React.FC<HTMLPreviewProps> = ({ blocks, logo }) => {
       margin-bottom: 10px;
     }
 
-    .container {
+    .container-with-sidebar {
       max-width: 900px;
       margin: 40px auto 20px 300px;
+      background: white;
+      padding: 20px 30px;     
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);      
+    }
+
+    .container-without-sidebar {
+      max-width: 900px;
+      margin: 40px auto;
       background: white;
       padding: 20px 30px;     
       border-radius: 8px;
@@ -279,23 +298,19 @@ export const HTMLPreview: React.FC<HTMLPreviewProps> = ({ blocks, logo }) => {
         border-bottom: 1px solid #ddd;
       }
       
-      .container {
+      .container-with-sidebar,
+      .container-without-sidebar {
         margin-left: 0;
+        margin-right: 0;
         padding: 20px;
       }
     }
   </style>
 </head>
 <body>
-  <div id="sidebar">
-${logoHTML}
-    <div class="nav-body">
-      <div class="nav-title" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">☰ Menu de Navegação</div>
-${navigationHTML}
-    </div>
-  </div>
+${sidebarHTML}
   
-  <div class="container">
+  <div class="${hasSidebar ? 'container-with-sidebar' : 'container-without-sidebar'}">
     ${contentHTML}
   </div>
 </body>
