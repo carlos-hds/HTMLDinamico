@@ -186,14 +186,11 @@ export const HTMLPreview: React.FC<HTMLPreviewProps> = ({ blocks, logo }) => {
 
     .container {
       max-width: 900px;
-      margin: auto;
+      margin: 40px auto 20px 300px;
       background: white;
-      padding: 20px;
-      padding-left: 40px; 
-      padding-right: 20px;      
+      padding: 20px 30px;     
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);      
-      margin-left: 280px;
     }
 
     .highlight {
