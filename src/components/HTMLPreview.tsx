@@ -189,8 +189,11 @@ export const HTMLPreview: React.FC<HTMLPreviewProps> = ({ blocks, logo }) => {
       margin: auto;
       background: white;
       padding: 20px;
+      padding-left: 40px; 
+      padding-right: 20px;      
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);      
+      margin-left: 280px;
     }
 
     .highlight {
